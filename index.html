@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project แม็กทศพล ลูกเเม่หญิง</title>
-    <!-- Tailwind CSS (V4) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- PeerJS สำหรับเปิดกล้อง Real-time -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* สไตล์อนิเมชันนีออนเพิ่มเติม */
         .neon-glow {
@@ -35,7 +33,6 @@
 </head>
 <body class="bg-[#0b0c10] text-[#c5c6c7] font-sans min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
 
-    <!-- ================= 1. หน้าลงชื่อเข้าใช้งานสไตล์ไซเบอร์ (Auth Screen) ================= -->
     <div id="auth-screen" class="flex-1 flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto w-full p-4 md:p-8 gap-8 md:gap-12">
         <div class="text-center md:text-left md:w-1/2 space-y-4">
             <div class="inline-block px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-xs font-bold text-cyan-400 uppercase tracking-widest animate-pulse">
@@ -61,7 +58,6 @@
                 </button>
             </div>
 
-            <!-- ฟอร์มเข้าสู่ระบบ -->
             <div id="form-login" class="space-y-4 relative z-10">
                 <h3 class="text-lg font-bold text-white tracking-wide"><i class="fa-solid fa-shield-halved text-cyan-400 mr-2"></i>ยืนยันตัวตนเข้าระบบ</h3>
                 <div>
@@ -77,7 +73,6 @@
                 </button>
             </div>
 
-            <!-- ฟอร์มสมัครสมาชิก -->
             <div id="form-register" class="space-y-4 hidden relative z-10">
                 <h3 class="text-lg font-bold text-white tracking-wide"><i class="fa-solid fa-user-gear text-purple-400 mr-2"></i>ลงทะเบียนเครือข่ายใหม่</h3>
                 <div>
@@ -100,7 +95,6 @@
     </div>
 
     <div id="main-screen" class="hidden min-h-screen flex flex-col">
-        <!-- แถบเมนูด้านบนสุด (Navbar หรูหราโปร่งแสง) -->
         <nav class="bg-[#1f2833]/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-xl">
             <div class="flex items-center gap-2">
                 <div class="w-9 h-9 bg-gradient-to-tr from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center font-black text-black text-xl shadow-md shadow-cyan-500/20">M</div>
@@ -120,9 +114,7 @@
             </div>
         </nav>
 
-        <!-- แถวบนสุด: ระบบโน้ตวงกลมสั้น (Floating Notes Area คล้ายไอจี/เฟสบุ๊คทันสมัย) -->
         <div class="bg-[#1a1e24] border-b border-gray-800/60 py-3 px-4 overflow-x-auto flex items-center gap-4">
-            <!-- ปุ่มเขียนโน้ตตัวเอง -->
             <div class="flex flex-col items-center flex-shrink-0 relative group">
                 <div onclick="promptWriteNote()" class="w-14 h-14 bg-gradient-to-tr from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-black text-xl font-bold cursor-pointer hover:scale-105 transition-all shadow-md relative">
                     <i class="fa-solid fa-plus"></i>
@@ -130,18 +122,13 @@
                 </div>
                 <span class="text-[11px] font-bold mt-1 text-cyan-400">โน้ตของคุณ</span>
             </div>
-            <!-- รายการโน้ตของคนอื่นในระบบที่จะแสดงแบบ Dynamic -->
             <div id="global-notes-box" class="flex items-center gap-4 overflow-x-auto">
-                <!-- ข้อมูลโน้ตเพื่อน ๆ จะถูกแสดงตรงนี้ -->
-            </div>
+                </div>
         </div>
 
-        <!-- พื้นที่หลัก (แบ่งสัดส่วนเลย์เอาต์หน้าจอคอมและมือถืออย่างลงตัว) -->
         <div class="flex-1 max-w-7xl w-full mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- [ฝั่งซ้าย - 3 คอลัมน์]: แผงโปรไฟล์ & ระบบแอดเพื่อนสร้างสังคม -->
             <div class="lg:col-span-3 space-y-4">
-                <!-- บัตรโปรไฟล์อัจฉริยะ -->
                 <div class="bg-[#1f2833]/40 border border-gray-800 rounded-2xl p-4 text-center relative overflow-hidden">
                     <div class="w-20 h-20 mx-auto mb-3 relative">
                         <div id="user-avatar" class="w-full h-full bg-gray-800 rounded-full flex items-center justify-center text-3xl border-2 border-cyan-500 overflow-hidden">👤</div>
@@ -155,7 +142,6 @@
                     <p id="profile-bio-view" class="text-xs text-gray-400 italic bg-black/30 p-2 rounded-lg min-h-[32px]">ยังไม่มีคำอธิบายโปรไฟล์</p>
                 </div>
 
-                <!-- ระบบจัดการเพื่อนและค้นหาไอดี (Social Sync) -->
                 <div class="bg-[#1f2833]/40 border border-gray-800 rounded-2xl p-4 space-y-3">
                     <h3 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center justify-between">
                         <span><i class="fa-solid fa-user-plus mr-1"></i> เพิ่มผู้ติดต่อใหม่</span>
@@ -165,13 +151,11 @@
                         <button onclick="sendFriendRequest()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 rounded-xl text-xs font-bold transition-all cursor-pointer">ส่งแอด</button>
                     </div>
 
-                    <!-- แท็บแจ้งเตือนคำขอแอดเพื่อนเข้า -->
                     <div id="friend-requests-zone" class="space-y-2 hidden border-t border-gray-800 pt-2">
                         <p class="text-[10px] font-bold text-amber-400">📬 มีคำขอเป็นเพื่อนถึงคุณ:</p>
                         <div id="requests-list" class="space-y-1"></div>
                     </div>
 
-                    <!-- รายชื่อเพื่อนที่เป็นมิตรกันแล้ว -->
                     <div class="border-t border-gray-800/80 pt-2">
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">รายชื่อเพื่อนของคุณ (<span id="friend-count">0</span>)</p>
                         <div id="my-friends-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
@@ -181,9 +165,7 @@
                 </div>
             </div>
 
-            <!-- [ตรงกลาง - 5 คอลัมน์]: บอร์ดฟีดข่าวสารส่วนกลางและโพสต์อัปเดตสถานะ -->
             <div class="lg:col-span-5 space-y-4">
-                <!-- กล่องสร้างโพสต์แบบล้ำ ๆ -->
                 <div class="bg-[#1f2833]/40 border border-gray-800 rounded-2xl p-4 space-y-3">
                     <div class="flex gap-3 items-center">
                         <div class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-sm border border-gray-700 mini-avatar overflow-hidden">👤</div>
@@ -195,16 +177,12 @@
                     </div>
                 </div>
 
-                <!-- พื้นที่แสดงสเตตัสฟีดทั้งหมด -->
                 <div id="social-feed" class="space-y-4">
-                    <!-- โพสต์ทำงานไดนามิก -->
-                </div>
+                    </div>
             </div>
 
-            <!-- [ฝั่งขวา - 4 คอลัมน์]: ห้องแชทส่วนตัว Messenger ทันสมัยสุดขีด -->
             <div class="lg:col-span-4">
                 <div class="bg-[#1f2833]/50 border border-gray-800 rounded-2xl h-[520px] flex flex-col overflow-hidden relative shadow-2xl">
-                    <!-- ส่วนหัวของห้องแชท -->
                     <div class="bg-black/40 p-3.5 border-b border-gray-800 flex justify-between items-center">
                         <div class="flex items-center gap-2.5">
                             <div class="relative">
@@ -216,13 +194,11 @@
                                 <p id="chat-header-sub" class="text-[10px] text-gray-400">เลือกเพื่อนเพื่อเริ่มส่งข้อความ</p>
                             </div>
                         </div>
-                        <!-- ปุ่มลัดโทรเปิดกล้องจากในแชท -->
                         <button id="chat-call-btn" onclick="triggerCallFromChat()" disabled class="bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 w-8 h-8 rounded-xl flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all cursor-pointer opacity-40">
                             <i class="fa-solid fa-video text-xs"></i>
                         </button>
                     </div>
 
-                    <!-- กล่องกระดานข้อความที่คุยโต้ตอบกัน -->
                     <div id="chat-messages-box" class="flex-1 p-4 overflow-y-auto space-y-3 bg-black/10 flex flex-col">
                         <div class="text-center my-auto text-gray-500 text-xs p-4 space-y-2">
                             <i class="fa-regular fa-comments text-3xl text-gray-600 block"></i>
@@ -230,7 +206,6 @@
                         </div>
                     </div>
 
-                    <!-- ช่องพิมพ์ส่งข้อความแชท -->
                     <div class="p-3 bg-black/40 border-t border-gray-800 flex gap-2">
                         <input type="text" id="chat-reply-input" disabled placeholder="พิมพ์ข้อความคุยแชทที่นี่..." class="flex-1 bg-[#0b0c10] border border-gray-800 focus:border-cyan-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none disabled:opacity-50">
                         <button id="chat-send-btn" disabled onclick="sendChatMessage()" class="bg-cyan-500 hover:bg-cyan-400 text-black w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold transition-all cursor-pointer disabled:opacity-50">
@@ -243,7 +218,6 @@
         </div>
     </div>
 
-    <!-- ================= 3. มอดอลกิจกรรมพิเศษกล่องสุ่ม Cyber Gacha ลุ้นรางวัลแก้เบื่อ ================= -->
     <div id="gacha-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-[#1f2833] border border-yellow-500/40 p-6 rounded-3xl max-w-sm w-full text-center space-y-4 relative overflow-hidden">
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl"></div>
@@ -261,7 +235,6 @@
         </div>
     </div>
 
-    <!-- ================= 4. หน้าจอระบบควบคุมสายโทรศัพท์เปิดกล้อง Real-time ================= -->
     <div id="incoming-call-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div class="bg-[#1f2833] p-6 rounded-3xl border border-emerald-500 max-w-sm w-full text-center space-y-4 shadow-2xl animate-pulse">
             <div class="w-16 h-16 bg-gradient-to-tr from-emerald-400 to-teal-600 rounded-full mx-auto flex items-center justify-center text-2xl text-black font-bold">📞</div>
@@ -292,8 +265,12 @@
     </div>
 
 
-    <!-- ================= ระบบประมวลผลกลไกซอฟต์แวร์ (Engine & Database Script) ================= -->
     <script>
+        // 🎯 ผูกค่าข้อมูลเชื่อมต่อฐานข้อมูลคลาวด์ Supabase ของพี่แมค
+        const SUPABASE_URL = "https://ckskufpiahijgopfvqnv.supabase.co"; 
+        const SUPABASE_KEY = "sb_publishable_YV0YXgCcBlmgM4OCBynK_g_uBlqbh5A"; 
+        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let currentUser = null;
         let activeChatUser = null;
         let peer = null;
@@ -301,30 +278,32 @@
         let currentCall = null;
         let callInterval = null;
         let callSeconds = 0;
+        let chatRealtimeSubscription = null;
 
         // เริ่มต้นตรวจสอบเซสชันข้อมูลทันทีที่เปิดระบบ
-        window.onload = function() {
-            initSystemDatabase();
+        window.onload = async function() {
             const sessionUser = localStorage.getItem("meta_match_session");
             if (sessionUser) {
-                currentUser = JSON.parse(sessionUser);
-                showMainScreen();
+                const localUser = JSON.parse(sessionUser);
+                // ดึงข้อมูลโปรไฟล์ล่าสุดของไอดีนี้จากเซิร์ฟเวอร์คลาวด์จริง
+                const { data: cloudUser } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('username', localUser.username)
+                    .single();
+
+                if (cloudUser) {
+                    currentUser = cloudUser;
+                    localStorage.setItem("meta_match_session", JSON.stringify(currentUser));
+                    showMainScreen();
+                } else {
+                    localStorage.removeItem("meta_match_session");
+                }
             }
             renderFeed();
+            // คอยฟังข้อความแชทใหม่สดแบบ Real-time บนคลาวด์
+            listenToGlobalChatRealtime();
         };
-
-        // ตั้งค่าฐานข้อมูลจำลองเบื้องต้นกรณีเปิดใช้โปรแกรมครั้งแรก
-        function initSystemDatabase() {
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            // บัญชีบอทสาธารณะสำหรับคุยโต้ตอบและแอดเพื่อนเล่น
-            if (!members["preme_99"]) {
-                members["preme_99"] = { username: "preme_99", displayname: "น้องพรีม รีวิวคอม", password: "123", bio: "สายโปรแกรมเมอร์แวะมาคุยกันได้ค๊าา 💻", avatar: "", coins: 350, note: "เหงาจัง ใครว่างทักแชทที!" };
-            }
-            if (!members["speed_dev"]) {
-                members["speed_dev"] = { username: "speed_dev", displayname: "เดฟสายซิ่ง", password: "123", bio: "เขียนโค้ดทั้งวัน ยิง API ทั้งคืน 🚀", avatar: "", coins: 700, note: "หลับคาคีย์บอร์ด..." };
-            }
-            localStorage.setItem("meta_vault_members", JSON.stringify(members));
-        }
 
         function switchAuthMode(mode) {
             const loginBtn = document.getElementById("btn-goto-login");
@@ -345,45 +324,62 @@
             }
         }
 
-        // 🔐 ลงทะเบียนผู้ใช้
-        function handleRegister() {
+        // 🔐 ลงทะเบียนผู้ใช้บันทึกลง Cloud Database
+        async function handleRegister() {
             const username = document.getElementById("reg-username").value.trim().toLowerCase();
             const displayname = document.getElementById("reg-displayname").value.trim();
             const password = document.getElementById("reg-password").value.trim();
 
             if (!username || !displayname || !password) return alert("กรุณากรอกข้อมูลระบบให้ครบถ้วนด้วยครับ!");
 
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            if (members[username]) return alert("Username นี้มีผู้ใช้อื่นลงทะเบียนแล้ว!");
+            // เช็กข้อมูลซ้ำบนคลาวด์
+            const { data: existUser } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('username', username)
+                .single();
 
-            members[username] = {
-                username: username,
-                displayname: displayname,
-                password: password,
-                bio: "สมาชิกระดับเริ่มต้นของ Nexus",
-                avatar: "",
-                coins: 500,
-                note: "",
-                friends: [],
-                requests: []
-            };
+            if (existUser) return alert("Username นี้มีผู้ใช้อื่นลงทะเบียนในระบบศูนย์กลางแล้ว!");
 
-            localStorage.setItem("meta_vault_members", JSON.stringify(members));
+            // เพิ่มข้อมูลลงฐานข้อมูลจริง
+            const { error } = await supabase
+                .from('profiles')
+                .insert([
+                    { 
+                        username: username, 
+                        displayname: displayname, 
+                        password: password,
+                        bio: "สมาชิกระดับเริ่มต้นของ Nexus",
+                        avatar_url: "",
+                        coins: 500,
+                        note: "",
+                        friends: [],
+                        requests: []
+                    }
+                ]);
+
+            if (error) return alert("เกิดข้อผิดพลาดในการเชื่อมต่อคลาวด์: " + error.message);
+
             alert("🔒 สมัครบัญชีระบบสำเร็จ! ใส่รหัสผ่านเพื่อยืนยันตนเข้าใช้งานได้ทันทีครับ");
             document.getElementById("login-username").value = username;
             switchAuthMode('login');
         }
 
-        // 🔑 ตรวจสอบสิทธิ์เข้าสู่ระบบ
-        function handleLogin() {
+        // 🔑 ตรวจสอบสิทธิ์เข้าสู่ระบบผ่าน Cloud Database
+        async function handleLogin() {
             const username = document.getElementById("login-username").value.trim().toLowerCase();
             const password = document.getElementById("login-password").value.trim();
 
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            const account = members[username];
+            if (!username || !password) return alert("กรุณากรอก Username และ Password ครับ");
 
-            if (!account || account.password !== password) {
-                return alert("❌ รหัสผ่านไม่ถูกต้อง หรือไม่พบบัญชีนี้ในทำเนียบเครือข่าย!");
+            const { data: account, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', username)
+                .single();
+
+            if (error || !account || account.password !== password) {
+                return alert("❌ รหัสผ่านไม่ถูกต้อง หรือไม่พบบัญชีนี้ในทำเนียบเครือข่ายศูนย์กลาง!");
             }
 
             currentUser = account;
@@ -395,6 +391,7 @@
         function handleLogout() {
             if (confirm("คุณต้องการปิดเซสชันและออกจากระบบเพื่อสลับไอดีหรือไม่?")) {
                 if (peer) peer.destroy();
+                if (chatRealtimeSubscription) supabase.removeChannel(chatRealtimeSubscription);
                 localStorage.removeItem("meta_match_session");
                 currentUser = null;
                 activeChatUser = null;
@@ -412,11 +409,17 @@
             initPeerJS();
         }
 
-        function refreshDashboardUI() {
-            // ดึงข้อมูลเวอร์ชันล่าสุดจากดาต้าเบสป้องกันข้อมูลตกหล่น
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            if(members[currentUser.username]) {
-                currentUser = members[currentUser.username];
+        async function refreshDashboardUI() {
+            // ดึงสถานะโปรไฟล์ล่าสุดตัวอัปเดตปัจจุบันจากคลาวด์
+            const { data: cloudUser } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', currentUser.username)
+                .single();
+
+            if (cloudUser) {
+                currentUser = cloudUser;
+                localStorage.setItem("meta_match_session", JSON.stringify(currentUser));
             }
 
             document.getElementById("profile-name").innerText = currentUser.displayname;
@@ -424,62 +427,93 @@
             document.getElementById("profile-bio-view").innerText = currentUser.bio || "ยังไม่มีคำอธิบายโปรไฟล์";
             document.getElementById("wallet-balance").innerText = currentUser.coins;
             
+            const bubble = document.getElementById("my-note-bubble");
             if (currentUser.note) {
-                const bubble = document.getElementById("my-note-bubble");
                 bubble.innerText = currentUser.note;
                 bubble.classList.remove("hidden");
+            } else {
+                bubble.classList.add("hidden");
             }
 
-            if (currentUser.avatar) {
-                document.getElementById("user-avatar").innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full" />`;
+            if (currentUser.avatar_url) {
+                document.getElementById("user-avatar").innerHTML = `<img src="${currentUser.avatar_url}" class="w-full h-full object-cover rounded-full" />`;
                 document.querySelectorAll(".mini-avatar").forEach(box => {
-                    box.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full" />`;
+                    box.innerHTML = `<img src="${currentUser.avatar_url}" class="w-full h-full object-cover rounded-full" />`;
                 });
+            } else {
+                document.getElementById("user-avatar").innerHTML = "👤";
             }
 
             renderGlobalNotes();
             renderFriendsSection();
-            if(activeChatUser) openPrivateChat(activeChatUser);
+            if(activeChatUser) renderChatMessages();
         }
 
-        function saveUserData() {
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            members[currentUser.username] = currentUser;
-            localStorage.setItem("meta_vault_members", JSON.stringify(members));
-            localStorage.setItem("meta_match_session", JSON.stringify(currentUser));
-        }
-
-        function uploadAvatar(event) {
+        // 💾 อัปโหลดรูปโปรไฟล์ขึ้น Cloud Storage ของ Supabase (ถังเก็บข้อมูลสาธารณะ)
+        async function uploadAvatar(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentUser.avatar = e.target.result;
-                    saveUserData();
-                    refreshDashboardUI();
-                };
-                reader.readAsDataURL(file);
-            }
+            if (!file) return;
+
+            // ตั้งชื่อไฟล์รูปโปรไฟล์เพื่อบันทึกบนคลาวด์
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${currentUser.username}-${Date.now()}.${fileExt}`;
+
+            // อัปโหลดรูปภาพไปยัง Bucket สตอเรจชื่อ 'avatars'
+            const { data, error } = await supabase.storage
+                .from('avatars')
+                .upload(fileName, file);
+
+            if (error) return alert('เกิดข้อผิดพลาดในการเซฟไฟล์รูป: ' + error.message);
+
+            // ดึงลิงก์ URL สาธารณะของรูปภาพ
+            const { data: urlData } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(fileName);
+
+            const publicUrl = urlData.publicUrl;
+
+            // อัปเดตลิงก์รูปโปรไฟล์ลงดาต้าเบสกลางคลาวด์
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: publicUrl })
+                .eq('username', currentUser.username);
+
+            if(updateError) return alert('อัปเดตโปรไฟล์ไม่สำเร็จ');
+
+            alert('เปลี่ยนรูปโปรไฟล์เก็บลงระบบคลาวด์สำเร็จแล้วครับพี่แมค!');
+            refreshDashboardUI();
         }
 
-        // ================= 📝 ฟีเจอร์ระบบฝากโน้ตสั้น (Instant Floating Notes) =================
-        function promptWriteNote() {
+        // ================= 📝 ฟีเจอร์ระบบฝากโน้ตสั้น (Instant Floating Notes บนคลาวด์) =================
+        async function promptWriteNote() {
             const txt = prompt("📝 พิมพ์โน้ตสั้นติดโปรไฟล์ของคุณ (ไม่เกิน 25 ตัวอักษร ให้เพื่อนเห็นบนบอร์ด):", currentUser.note || "");
             if (txt !== null) {
-                currentUser.note = txt.substring(0, 25);
-                saveUserData();
+                const cleanedNote = txt.substring(0, 25);
+                
+                await supabase
+                    .from('profiles')
+                    .update({ note: cleanedNote })
+                    .eq('username', currentUser.username);
+
                 refreshDashboardUI();
             }
         }
 
-        function renderGlobalNotes() {
+        async function renderGlobalNotes() {
             const notesBox = document.getElementById("global-notes-box");
             notesBox.innerHTML = "";
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
             
-            Object.keys(members).forEach(key => {
-                const user = members[key];
-                if (user.username !== currentUser.username && user.note) {
+            // ดึงข้อมูลสมาชิกทั้งหมดในระบบคลาวด์ที่มีการฝากโน้ตไว้
+            const { data: allMembers } = await supabase
+                .from('profiles')
+                .select('*')
+                .not('note', 'is', null)
+                .not('note', 'eq', '');
+            
+            if (!allMembers) return;
+
+            allMembers.forEach(user => {
+                if (user.username !== currentUser.username) {
                     notesBox.innerHTML += `
                         <div onclick="quickChatFromNote('${user.username}')" class="flex flex-col items-center flex-shrink-0 cursor-pointer group">
                             <div class="w-14 h-14 bg-gray-800 rounded-full border-2 border-purple-500 p-0.5 relative transition-all group-hover:scale-105">
@@ -487,7 +521,7 @@
                                     "${user.note}"
                                 </div>
                                 <div class="w-full h-full bg-gray-900 rounded-full flex items-center justify-center font-bold text-xs text-gray-400 overflow-hidden">
-                                    ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full object-cover" />` : user.displayname[0]}
+                                    ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-full h-full object-cover" />` : user.displayname[0]}
                                 </div>
                             </div>
                             <span class="text-[10px] text-gray-400 mt-1 truncate max-w-[65px]">${user.displayname}</span>
@@ -502,49 +536,66 @@
             openPrivateChat(targetUsername);
         }
 
-        // ================= 🤝 ระบบแอดเพื่อน และส่งคำขอเชื่อมต่อเครือข่าย (Social Sync) =================
-        function sendFriendRequest() {
+        // ================= 🤝 ระบบแอดเพื่อน และส่งคำขอเชื่อมต่อเครือข่าย (Social Sync บนคลาวด์) =================
+        async function sendFriendRequest() {
             const targetInput = document.getElementById("search-friend-id");
             const targetId = targetInput.value.trim().toLowerCase();
             
             if(!targetId) return;
             if(targetId === currentUser.username) return alert("ไม่สามารถส่งคำขอแอดหาตนเองได้ครับ");
 
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            if(!members[targetId]) return alert("❌ ไม่พบชื่อผู้ใช้งานนี้ในระบบศูนย์กลาง!");
+            // เช็กข้อมูลเป้าหมายจากดาต้าเบสคลาวด์กลาง
+            const { data: targetUser } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', targetId)
+                .single();
 
-            let targetUser = members[targetId];
-            targetUser.requests = targetUser.requests || [];
-            
-            if(targetUser.requests.includes(currentUser.username)) return alert("คุณเคยส่งคำขอให้ยูสเซอร์นี้ไปแล้ว ค้างรออนุมัติครับ");
-            
+            if(!targetUser) return alert("❌ ไม่พบชื่อผู้ใช้งานนี้ในระบบศูนย์กลาง!");
+
             currentUser.friends = currentUser.friends || [];
             if(currentUser.friends.includes(targetId)) return alert("คุณและบัญชีนี้เป็นเพื่อนกันอยู่แล้วในปัจจุบัน!");
 
+            // เช็กค้างส่งคำขอ
+            targetUser.requests = targetUser.requests || [];
+            if(targetUser.requests.includes(currentUser.username)) return alert("คุณเคยส่งคำขอให้ยูสเซอร์นี้ไปแล้ว ค้างรออนุมัติครับ");
+
+            // อัปเดตรายการคำขอแอดเข้าในระบบเป้าหมาย
             targetUser.requests.push(currentUser.username);
-            members[targetId] = targetUser;
-            localStorage.setItem("meta_vault_members", JSON.stringify(members));
+            
+            await supabase
+                .from('profiles')
+                .update({ requests: targetUser.requests })
+                .eq('username', targetId);
             
             alert(`🚀 ส่งสัญญาณคำขอเป็นเพื่อนไปยัง @${targetId} เรียบร้อยแล้ว!`);
             targetInput.value = "";
+            refreshDashboardUI();
         }
 
-        function renderFriendsSection() {
+        async function renderFriendsSection() {
             const reqZone = document.getElementById("friend-requests-zone");
             const reqList = document.getElementById("requests-list");
             const friendsList = document.getElementById("my-friends-list");
             
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-
-            // 1. แสดงรายการคนมาขอแอดเพื่อน
+            // 1. แสดงรายการคนมาขอแอดเพื่อนดึงเรียลไทม์
             currentUser.requests = currentUser.requests || [];
             if (currentUser.requests.length > 0) {
                 reqZone.classList.remove("hidden");
                 reqList.innerHTML = "";
+                
+                // ดึงข้อมูลชื่อแสดงผลของคนที่มาขอแอด
+                const { data: sendersData } = await supabase
+                    .from('profiles')
+                    .select('username, displayname')
+                    .in('username', currentUser.requests);
+
                 currentUser.requests.forEach(sender => {
+                    const matched = (sendersData || []).find(u => u.username === sender);
+                    const dName = matched ? matched.displayname : sender;
                     reqList.innerHTML += `
                         <div class="bg-black/40 p-2 rounded-xl flex justify-between items-center text-xs border border-amber-500/20">
-                            <span class="font-bold text-gray-300">@${sender}</span>
+                            <span class="font-bold text-gray-300">${dName} <span class="text-[10px] text-gray-500">(@${sender})</span></span>
                             <div class="flex gap-1">
                                 <button onclick="acceptFriend('${sender}')" class="bg-emerald-500 text-black px-2 py-0.5 rounded font-bold text-[10px] cursor-pointer">รับ</button>
                                 <button onclick="rejectFriend('${sender}')" class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px] cursor-pointer">ข้าม</button>
@@ -556,74 +607,104 @@
                 reqZone.classList.add("hidden");
             }
 
-            // 2. แสดงรายชื่อเพื่อนแท้ทั้งหมด
+            // 2. แสดงรายชื่อเพื่อนแท้ทั้งหมดจากฐานข้อมูลจริง
             currentUser.friends = currentUser.friends || [];
             document.getElementById("friend-count").innerText = currentUser.friends.length;
             
+            friendsList.innerHTML = "";
             if(currentUser.friends.length > 0) {
-                friendsList.innerHTML = "";
-                currentUser.friends.forEach(fName => {
-                    const fObj = members[fName] || { displayname: fName, username: fName, avatar: "" };
-                    const isSelected = activeChatUser === fObj.username;
-                    friendsList.innerHTML += `
-                        <div onclick="openPrivateChat('${fObj.username}')" class="p-2 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${isSelected ? 'bg-cyan-500/10 border border-cyan-500/30' : 'bg-black/30 hover:bg-gray-800/50 border border-transparent'}">
-                            <div class="w-7 h-7 rounded-full bg-gray-800 text-[10px] font-bold flex items-center justify-center overflow-hidden border border-gray-700">
-                                ${fObj.avatar ? `<img src="${fObj.avatar}" class="w-full h-full object-cover" />` : fObj.displayname[0]}
+                const { data: friendsData } = await supabase
+                    .from('profiles')
+                    .select('username, displayname, avatar_url')
+                    .in('username', currentUser.friends);
+
+                if (friendsData) {
+                    friendsData.forEach(fObj => {
+                        const isSelected = activeChatUser === fObj.username;
+                        friendsList.innerHTML += `
+                            <div onclick="openPrivateChat('${fObj.username}')" class="p-2 rounded-xl flex items-center gap-2.5 cursor-pointer transition-all ${isSelected ? 'bg-cyan-500/10 border border-cyan-500/30' : 'bg-black/30 hover:bg-gray-800/50 border border-transparent'}">
+                                <div class="w-7 h-7 rounded-full bg-gray-800 text-[10px] font-bold flex items-center justify-center overflow-hidden border border-gray-700">
+                                    ${fObj.avatar_url ? `<img src="${fObj.avatar_url}" class="w-full h-full object-cover" />` : fObj.displayname[0]}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h5 class="text-xs font-bold text-gray-200 truncate">${fObj.displayname}</h5>
+                                    <p class="text-[9px] text-gray-500 truncate">คลิกเพื่อคุยแชท</p>
+                                </div>
+                                <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h5 class="text-xs font-bold text-gray-200 truncate">${fObj.displayname}</h5>
-                                <p class="text-[9px] text-gray-500 truncate">คลิกเพื่อคุยแชท</p>
-                            </div>
-                            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                }
+            } else {
+                friendsList.innerHTML = `<p class="text-xs text-gray-500 italic text-center py-2">ยังไม่มีเพื่อนในระบบ ลองพิมพ์แอดข้างบนดูนะ!</p>`;
             }
         }
 
-        function acceptFriend(sender) {
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            
+        async function acceptFriend(sender) {
+            // 1. จัดการโปรไฟล์ของตัวเองบนคลาวด์
             currentUser.friends = currentUser.friends || [];
             currentUser.requests = currentUser.requests.filter(r => r !== sender);
             if(!currentUser.friends.includes(sender)) currentUser.friends.push(sender);
 
-            let senderUser = members[sender];
-            if(senderUser) {
+            await supabase
+                .from('profiles')
+                .update({ friends: currentUser.friends, requests: currentUser.requests })
+                .eq('username', currentUser.username);
+
+            // 2. จัดการโปรไฟล์ของฝั่งผู้ส่งบนคลาวด์
+            const { data: senderUser } = await supabase
+                .from('profiles')
+                .select('friends')
+                .eq('username', sender)
+                .single();
+
+            if (senderUser) {
                 senderUser.friends = senderUser.friends || [];
                 if(!senderUser.friends.includes(currentUser.username)) senderUser.friends.push(currentUser.username);
-                members[sender] = senderUser;
+                
+                await supabase
+                    .from('profiles')
+                    .update({ friends: senderUser.friends })
+                    .eq('username', sender);
             }
 
-            saveUserData();
-            localStorage.setItem("meta_vault_members", JSON.stringify(members));
             refreshDashboardUI();
         }
 
-        function rejectFriend(sender) {
+        async function rejectFriend(sender) {
             currentUser.requests = currentUser.requests.filter(r => r !== sender);
-            saveUserData();
+            await supabase
+                .from('profiles')
+                .update({ requests: currentUser.requests })
+                .eq('username', currentUser.username);
+
             refreshDashboardUI();
         }
 
-        // ================= 💬 ระบบห้องแชทส่วนตัว Messenger ทันสมัยสุดขีด (Nexus Chat Sandbox) =================
-        function openPrivateChat(username) {
+        // ================= 💬 ระบบห้องแชทส่วนตัว Messenger ทันสมัยสุดขีด (เชื่อม Cloud Database จริง) =================
+        async function openPrivateChat(username) {
             activeChatUser = username;
-            let members = JSON.parse(localStorage.getItem("meta_vault_members")) || {};
-            const partner = members[username] || { displayname: username, username: username, avatar: "" };
+            
+            const { data: partner } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('username', username)
+                .single();
+
+            if (!partner) return;
 
             // อัปเดตส่วนหัวแถบ Messenger ด้านขวา
             document.getElementById("chat-header-name").innerText = partner.displayname;
-            document.getElementById("chat-header-sub").innerText = `@${partner.username} • สถานะจัดเตรียมออนไลน์`;
+            document.getElementById("chat-header-sub").innerText = `@${partner.username} • สถานะออนไลน์คู่ขนาน`;
             document.getElementById("chat-header-status").className = "w-2.5 h-2.5 bg-emerald-500 border-2 border-[#1f2833] rounded-full absolute bottom-0 right-0";
             
-            if(partner.avatar) {
-                document.getElementById("chat-header-avatar").innerHTML = `<img src="${partner.avatar}" class="w-full h-full object-cover rounded-full" />`;
+            if(partner.avatar_url) {
+                document.getElementById("chat-header-avatar").innerHTML = `<img src="${partner.avatar_url}" class="w-full h-full object-cover rounded-full" />`;
             } else {
                 document.getElementById("chat-header-avatar").innerText = partner.displayname[0];
             }
 
-            // เปิดเปิดการใช้งานกล่องควบคุม
+            // เปิดการใช้งานกล่องควบคุม
             document.getElementById("chat-reply-input").disabled = false;
             document.getElementById("chat-send-btn").disabled = false;
             document.getElementById("chat-call-btn").disabled = false;
@@ -632,16 +713,21 @@
             renderChatMessages();
         }
 
-        function renderChatMessages() {
+        async function renderChatMessages() {
             if(!activeChatUser) return;
             const msgBox = document.getElementById("chat-messages-box");
+
+            // ดึงข้อความแชทระหว่างเรากับเพื่อนจากตาราง Cloud chat_messages
+            const { data: chatHistory, error } = await supabase
+                .from('chat_messages')
+                .select('*')
+                .or(`and(sender.eq.${currentUser.username},receiver.eq.${activeChatUser}),and(sender.eq.${activeChatUser},receiver.eq.${currentUser.username})`)
+                .order('created_at', { ascending: true });
+
             msgBox.innerHTML = "";
 
-            const chatKey = [currentUser.username, activeChatUser].sort().join("_v_");
-            let chatHistory = JSON.parse(localStorage.getItem(`chat_log_${chatKey}`)) || [];
-
-            if(chatHistory.length === 0) {
-                msgBox.innerHTML = `<div class="text-center my-auto text-gray-600 text-[11px] italic">🔒 รหัสความปลอดภัยสมบูรณ์ เริ่มส่งข้อความเพื่อสร้างประวัติการสนทนาแรกของคุณ...</div>`;
+            if(!chatHistory || chatHistory.length === 0) {
+                msgBox.innerHTML = `<div class="text-center my-auto text-gray-600 text-[11px] italic">🔒 รหัสความปลอดภัยคลาวด์สมบูรณ์ เริ่มส่งข้อความเพื่อสร้างประวัติการสนทนาแรกของคุณ...</div>`;
                 return;
             }
 
@@ -649,14 +735,14 @@
                 const isMe = msg.sender === currentUser.username;
                 if(isMe) {
                     msgBox.innerHTML += `
-                        <div class="self-end max-w-[80%] bg-gradient-to-br from-cyan-500 to-blue-600 text-black px-3 py-2 rounded-2xl rounded-tr-none text-xs font-medium shadow-md">
-                            ${msg.text}
+                        <div class="self-end max-w-[80%] bg-gradient-to-br from-cyan-500 to-blue-600 text-black px-3 py-2 rounded-2xl rounded-tr-none text-xs font-medium shadow-md mb-2">
+                            ${msg.message}
                         </div>
                     `;
                 } else {
                     msgBox.innerHTML += `
-                        <div class="self-start max-w-[80%] bg-[#242526] text-gray-200 px-3 py-2 rounded-2xl rounded-tl-none text-xs border border-gray-800 shadow-sm">
-                            ${msg.text}
+                        <div class="self-start max-w-[80%] bg-[#242526] text-gray-200 px-3 py-2 rounded-2xl rounded-tl-none text-xs border border-gray-800 shadow-sm mb-2">
+                            ${msg.message}
                         </div>
                     `;
                 }
@@ -664,36 +750,37 @@
             msgBox.scrollTop = msgBox.scrollHeight;
         }
 
-        function sendChatMessage() {
+        async function sendChatMessage() {
             const input = document.getElementById("chat-reply-input");
             const txt = input.value.trim();
             if(!txt || !activeChatUser) return;
 
-            const chatKey = [currentUser.username, activeChatUser].sort().join("_v_");
-            let chatHistory = JSON.parse(localStorage.getItem(`chat_log_${chatKey}`)) || [];
+            // บันทึกข้อความแชทใหม่เข้าตารางระบบคลาวด์ฐานข้อมูลกลาง
+            await supabase
+                .from('chat_messages')
+                .insert([
+                    { sender: currentUser.username, receiver: activeChatUser, message: txt }
+                ]);
 
-            chatHistory.push({
-                sender: currentUser.username,
-                text: txt,
-                time: new Date().toLocaleTimeString()
-            });
-
-            localStorage.setItem(`chat_log_${chatKey}`, JSON.stringify(chatHistory));
             input.value = "";
             renderChatMessages();
+        }
 
-            // กลไกจำลอง บอทตอบกลับอัจฉริยะกรณีคุยกับบอทตัวเริ่มต้นระบบแก้เบื่อ
-            if(activeChatUser === "preme_99" || activeChatUser === "speed_dev") {
-                setTimeout(() => {
-                    chatHistory.push({
-                        sender: activeChatUser,
-                        text: `🤖 [ระบบตอบกลับกึ่งอัตโนมัติ]: ยินดีที่ได้รับสัญญาณข้อความเรื่อง "${txt}" ครับผม! ตอนนี้ระบบ WebRTC สแตนด์บายพร้อมรองรับสัญญานคอลเปิดกล้องแบบเรียลไทม์ กดปุ่มไอคอนกล้องมุมบนเพื่อเทสสายโทรศัพท์เปิดกล้องได้เลยนะฮะ!`,
-                        time: new Date().toLocaleTimeString()
-                    });
-                    localStorage.setItem(`chat_log_${chatKey}`, JSON.stringify(chatHistory));
-                    renderChatMessages();
-                }, 1000);
-            }
+        // ตั้งค่าฟังก์ชันรับสัญญาณอัปเดตแบบเรียลไทม์เวลามีแชทเด้งเข้ามาใหม่
+        function listenToGlobalChatRealtime() {
+            chatRealtimeSubscription = supabase
+                .channel('schema-db-changes')
+                .on(
+                    'postgres_changes',
+                    { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+                    (payload) => {
+                        // ถ้าระบบเปิดแชทของคนนั้นค้างไว้อยู่ ให้ทำการรีเฟรชหน้าต่างข้อความทันที
+                        if(activeChatUser && (payload.new.sender === activeChatUser || payload.new.receiver === activeChatUser)) {
+                            renderChatMessages();
+                        }
+                    }
+                )
+                .subscribe();
         }
 
         function triggerCallFromChat() {
@@ -714,12 +801,12 @@
             document.getElementById("gacha-modal").classList.add("hidden");
         }
 
-        function rollGacha() {
+        async function rollGacha() {
             const display = document.getElementById("gacha-display");
             display.innerText = "🌀";
             display.classList.add("animate-spin");
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 display.classList.remove("animate-spin");
                 const prizes = [
                     { name: "🪙 +50 Coins", action: () => { currentUser.coins += 50; } },
@@ -730,7 +817,13 @@
 
                 const win = prizes[Math.floor(Math.random() * prizes.length)];
                 win.action();
-                saveUserData();
+
+                // อัปเดตตังค์และยศขึ้นคลาวด์
+                await supabase
+                    .from('profiles')
+                    .update({ coins: currentUser.coins, displayname: currentUser.displayname })
+                    .eq('username', currentUser.username);
+
                 refreshDashboardUI();
 
                 display.innerHTML = `<span class="text-xs font-black text-yellow-400 text-center px-2">${win.name}</span>`;
@@ -822,7 +915,12 @@
                 handleCallStream();
                 
                 currentUser.coins -= 50;
-                saveUserData();
+                
+                await supabase
+                    .from('profiles')
+                    .update({ coins: currentUser.coins })
+                    .eq('username', currentUser.username);
+
                 refreshDashboardUI();
 
                 document.getElementById("video-screen").classList.remove("hidden");
@@ -842,7 +940,12 @@
                 handleCallStream();
 
                 currentUser.coins += 40; 
-                saveUserData();
+                
+                await supabase
+                    .from('profiles')
+                    .update({ coins: currentUser.coins })
+                    .eq('username', currentUser.username);
+
                 refreshDashboardUI();
 
                 document.getElementById("video-screen").classList.remove("hidden");
